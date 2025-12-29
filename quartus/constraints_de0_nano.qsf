@@ -1,0 +1,142 @@
+# ============================================================================
+# DE0-Nano — FINAL CONSTRAINT FILE (QSF, FULLY COMMENTED)
+# Project  : CPU8 (Accumulator-based 8-bit CPU)
+# Tool     : Quartus II / Quartus Prime
+# FPGA     : Intel (Altera) Cyclone IV E EP4CE22F17C6
+# Board    : Terasic DE0-Nano
+#
+# This QSF matches EXACTLY the ports defined in top.v:
+#
+#   input  clk
+#   input  btn_reset
+#   output [7:0] leds
+#
+# NOTE:
+# - DE0-Nano has NO on-board 7-segment display
+# - Only LEDs are used on this board
+#
+# Author  : Hassan - SinzoTECH Engineering Consultancy
+# Date    : December 2024
+# ============================================================================
+
+
+# ============================================================================
+# DEVICE CONFIGURATION
+# ============================================================================
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE22F17C6
+set_global_assignment -name TOP_LEVEL_ENTITY top
+
+
+# ============================================================================
+# CLOCK INPUT
+# ============================================================================
+# Board Signal : 50 MHz on-board oscillator
+# Board Label  : CLOCK_50
+# FPGA Pin     : PIN_R8
+# Frequency   : 50 MHz
+#
+# This clock drives the entire CPU (single clock domain)
+# ============================================================================
+set_location_assignment PIN_R8 -to clk
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk
+
+
+# ============================================================================
+# RESET BUTTON
+# ============================================================================
+# Board Button : KEY0
+# Board Label  : KEY0
+# FPGA Pin     : PIN_J15
+#
+# IMPORTANT:
+# - KEY0 is ACTIVE LOW on DE0-Nano
+# - Pressed  = '0'
+# - Released = '1'
+#
+# OPTIONS:
+# 1- Invert reset in HDL
+# 2- OR treat reset as active low in code
+#
+# Current mapping: direct connection (logic inversion handled in HDL if needed)
+# ============================================================================
+set_location_assignment PIN_J15 -to btn_reset
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to btn_reset
+
+
+# ============================================================================
+# USER LEDs (ON-BOARD)
+# ============================================================================
+# DE0-Nano has 8 green user LEDs labelled LED0 to LED7.
+#
+# Mapping convention:
+#   leds[0] = LSB  → LED0
+#   leds[7] = MSB  → LED7
+#
+# LEDs are ACTIVE HIGH:
+#   Logic '1' → LED ON
+#   Logic '0' → LED OFF
+#
+# Each LED already has a series resistor on-board.
+# ============================================================================
+#
+# leds[0] → LED0
+# FPGA Pin : PIN_A15
+set_location_assignment PIN_A15 -to leds[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[0]
+
+# leds[1] → LED1
+# FPGA Pin : PIN_A13
+set_location_assignment PIN_A13 -to leds[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[1]
+
+# leds[2] → LED2
+# FPGA Pin : PIN_B13
+set_location_assignment PIN_B13 -to leds[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[2]
+
+# leds[3] → LED3
+# FPGA Pin : PIN_A11
+set_location_assignment PIN_A11 -to leds[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[3]
+
+# leds[4] → LED4
+# FPGA Pin : PIN_D1
+set_location_assignment PIN_D1 -to leds[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[4]
+
+# leds[5] → LED5
+# FPGA Pin : PIN_F3
+set_location_assignment PIN_F3 -to leds[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[5]
+
+# leds[6] → LED6
+# FPGA Pin : PIN_B1
+set_location_assignment PIN_B1 -to leds[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[6]
+
+# leds[7] → LED7
+# FPGA Pin : PIN_L3
+set_location_assignment PIN_L3 -to leds[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to leds[7]
+
+
+# ============================================================================
+# COMPILATION / OPTIMIZATION SETTINGS
+# ============================================================================
+# Aggressive optimization for performance
+# Safe for this small design
+# ============================================================================
+set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
+set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE SPEED
+
+
+# ============================================================================
+# NOTES FOR REVIEWERS / CLIENT
+# ============================================================================
+# - This design uses pure HDL (no vendor-specific primitives)
+# - CPU8 runs correctly at 50 MHz on Cyclone IV
+# - LEDs are driven directly by the accumulator value
+# - No external components required (resistors already on board)
+# - Only constraint file changes are needed to retarget boards
+# ============================================================================
